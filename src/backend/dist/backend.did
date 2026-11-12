@@ -1,0 +1,317 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   student;
+   teacher;
+ };
+type UserProfile = 
+ record {
+   createdAt: Timestamp;
+   email: text;
+   id: UserId;
+   name: text;
+   role: UserRole;
+ };
+type UserId = text;
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type TimetableEntry = 
+ record {
+   day: text;
+   room: text;
+   subject: text;
+   teacher: text;
+   time: text;
+ };
+type Timestamp = int;
+type TeacherProfile = 
+ record {
+   assignedStudents: vec UserId;
+   subject: text;
+   userId: UserId;
+ };
+type TeacherInfo = 
+ record {
+   profile: UserProfile;
+   teacherProfile: opt TeacherProfile;
+ };
+type StudentProfile = 
+ record {
+   enrollmentId: text;
+   faculty: text;
+   userId: UserId;
+   year: nat;
+ };
+type StudentInfo = 
+ record {
+   profile: UserProfile;
+   studentProfile: opt StudentProfile;
+ };
+type QuizResult = 
+ record {
+   date: text;
+   id: text;
+   maxScore: float64;
+   quizName: text;
+   score: float64;
+   studentId: UserId;
+   subject: text;
+ };
+type OutingRequest = 
+ record {
+   createdAt: Timestamp;
+   destination: text;
+   endDate: text;
+   id: text;
+   reason: text;
+   reviewComment: opt text;
+   reviewedBy: opt UserId;
+   startDate: text;
+   status: ApprovalStatus;
+   studentId: UserId;
+ };
+type Notification = 
+ record {
+   createdAt: Timestamp;
+   id: text;
+   message: text;
+   notifType: text;
+   read: bool;
+   userId: UserId;
+ };
+type Grade = 
+ record {
+   grade: text;
+   marks: float64;
+   semester: text;
+   studentId: UserId;
+   subject: text;
+ };
+type DocumentMeta = 
+ record {
+   assignmentId: opt text;
+   category: DocumentCategory;
+   fileName: text;
+   id: text;
+   uploadedAt: Timestamp;
+   uploadedBy: UserId;
+ };
+type DocumentCategory = 
+ variant {
+   assignment;
+   notes;
+   other;
+   syllabus;
+ };
+type ChatMessage = 
+ record {
+   content: text;
+   role: text;
+ };
+type AttendanceStatus = 
+ variant {
+   absent;
+   late;
+   present;
+ };
+type AttendanceRecord = 
+ record {
+   date: text;
+   status: AttendanceStatus;
+   studentId: UserId;
+   subject: text;
+ };
+type Assignment = 
+ record {
+   assignedTo: vec UserId;
+   createdAt: Timestamp;
+   description: text;
+   dueDate: text;
+   fileUrl: text;
+   id: text;
+   subject: text;
+   teacherId: UserId;
+   title: text;
+ };
+type ApprovalStatus = 
+ variant {
+   approved;
+   denied;
+   pending;
+ };
+/// Hologram Student Management System — main actor.
+/// Composes the AI chatbot mixin, users-academic domain mixins,
+/// document uploads mixin, and the object-storage platform extension.
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  addGrade: (grade: Grade, callerUserId: text) -> (variant {
+                                                     err: text;
+                                                     ok;
+                                                   });
+  addNotification: (notification: Notification, callerUserId: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  addQuizResult: (quiz: QuizResult, callerUserId: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  assignStudentToTeacher: (teacherId: UserId, studentId: UserId,
+   callerUserId: text) -> (variant {
+                             err: text;
+                             ok;
+                           });
+  createAssignment: (assignment: Assignment, callerUserId: text) ->
+   (variant {
+      err: text;
+      ok: Assignment;
+    });
+  createStudentProfile: (userId: UserId, faculty: text, year: nat,
+   callerUserId: text) -> (variant {
+                             err: text;
+                             ok: StudentProfile;
+                           });
+  createTeacherProfile: (userId: UserId, subject: text, callerUserId:
+   text) -> (variant {
+               err: text;
+               ok: TeacherProfile;
+             });
+  deleteDocument: (docId: text) -> (variant {
+                                      err: text;
+                                      ok;
+                                    });
+  forceReseedAdmin: () -> (variant {ok;});
+  generateStudyRoadmap: (goal: text) -> (variant {
+                                           err: text;
+                                           ok: text;
+                                         });
+  getAllDocuments: () -> (vec DocumentMeta) query;
+  getAllOutingRequests: () -> (vec OutingRequest) query;
+  getAllStudents: (callerUserId: text) -> (vec StudentInfo) query;
+  getAllTeachers: (callerUserId: text) -> (vec TeacherInfo) query;
+  getAssignedStudents: (teacherId: UserId) -> (vec UserProfile) query;
+  getAssignmentDocuments: (assignmentId: text) -> (vec DocumentMeta) query;
+  getAssignmentsBySubject: (subject: text) -> (vec Assignment) query;
+  getAttendanceByDate: (date: text, teacherId: UserId) ->
+   (vec AttendanceRecord) query;
+  getDocumentContent: (docId: text) -> (opt blob) query;
+  getDocumentMeta: (docId: text) -> (opt DocumentMeta) query;
+  getPendingOutingRequests: (teacherId: UserId) -> (vec OutingRequest) query;
+  getStudentAssignments: (studentId: UserId) -> (vec Assignment) query;
+  getStudentAttendance: (studentId: UserId) -> (vec AttendanceRecord) query;
+  getStudentGrades: (studentId: UserId) -> (vec Grade) query;
+  getStudentOutingRequests: (studentId: UserId) -> (vec OutingRequest) query;
+  getStudentProfile: (userId: UserId) -> (opt StudentProfile) query;
+  getStudentQuizResults: (studentId: UserId) -> (vec QuizResult) query;
+  getTeacherProfile: (userId: UserId) -> (opt TeacherProfile) query;
+  getTimetable: (faculty: text) -> (vec TimetableEntry) query;
+  getUserDocuments: (userId: UserId) -> (vec DocumentMeta) query;
+  getUserNotifications: (userId: UserId) -> (vec Notification) query;
+  getUserProfile: (userId: UserId) -> (opt UserProfile) query;
+  loginWithPassword: (username: text, password: text) ->
+   (variant {
+      err: text;
+      ok: UserProfile;
+    });
+  markAttendance: (records: vec AttendanceRecord, callerUserId: text) ->
+   (variant {
+      err: text;
+      ok: nat;
+    });
+  markNotificationRead: (notifId: text, userId: UserId, callerUserId:
+   text) -> (variant {
+               err: text;
+               ok;
+             });
+  registerUser: (name: text, email: text, role: UserRole) ->
+   (variant {
+      err: text;
+      ok: UserProfile;
+    });
+  registerWithPassword: (username: text, password: text, name: text, email:
+   text, role: UserRole) -> (variant {
+                               err: text;
+                               ok: text;
+                             });
+  removeUser: (userId: UserId, callerUserId: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  reviewOutingRequest: (requestId: text, status: ApprovalStatus, comment:
+   opt text, reviewerId: UserId) -> (variant {
+                                       err: text;
+                                       ok: OutingRequest;
+                                     });
+  sendChatMessage: (messages: vec ChatMessage) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
+  submitOutingRequest: (req:
+   record {
+     destination: text;
+     endDate: text;
+     reason: text;
+     startDate: text;
+     studentId: UserId;
+   }) -> (variant {
+            err: text;
+            ok: OutingRequest;
+          });
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  updateStudentFaculty: (userId: UserId, faculty: text, callerUserId:
+   text) -> (variant {
+               err: text;
+               ok;
+             });
+  uploadDocument: (fileName: text, fileData: blob, category:
+   DocumentCategory, assignmentId: opt text) ->
+   (variant {
+      err: text;
+      ok: DocumentMeta;
+    });
+}

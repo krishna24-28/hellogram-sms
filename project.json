@@ -1,0 +1,23 @@
+{
+  "overview": "Hellogram SMS is a futuristic Hologram Student Management System with role-based dashboards for students, teachers, and admins. Features dual-mode authentication (Internet Identity + username/password), persistent data storage, secure password hashing, and an AI assistant — all wrapped in a neon-glow holographic UI.",
+  "features": [
+    "Dual-mode login: Internet Identity + username/password",
+    "Secure SHA-256 password hashing",
+    "Persistent data storage across upgrades (stable Motoko)",
+    "Krishna admin seeded once on first deploy",
+    "Role-based dashboards: student, teacher, admin",
+    "AI assistant chatbot for students",
+    "Attendance, grades, assignments, outing requests",
+    "Holographic neon UI with animations"
+  ],
+  "category": "education",
+  "tags": [
+    "student-management",
+    "holographic-ui",
+    "authentication",
+    "persistent-storage",
+    "ai-assistant",
+    "role-based-access"
+  ],
+  "last_updated": "2026-04-10T07:09:30.637Z"
+}

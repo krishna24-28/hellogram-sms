@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "DM Sans", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+    --radius: 0.625rem;
+
+    --background: 0.12 0.01 245;
+    --foreground: 0.95 0.01 245;
+    --card: 0.16 0.012 245;
+    --card-foreground: 0.95 0.01 245;
+    --popover: 0.16 0.012 245;
+    --popover-foreground: 0.95 0.01 245;
+
+    --primary: 0.7 0.22 190;
+    --primary-foreground: 0.12 0.01 190;
+
+    --secondary: 0.75 0.2 95;
+    --secondary-foreground: 0.12 0.01 95;
+    --muted: 0.22 0.008 245;
+    --muted-foreground: 0.6 0.008 245;
+
+    --accent: 0.65 0.24 305;
+    --accent-foreground: 0.95 0.01 305;
+
+    --destructive: 0.65 0.24 305;
+    --destructive-foreground: 0.95 0.01 305;
+
+    --border: 0.25 0.012 245;
+    --input: 0.25 0.012 245;
+    --ring: 0.7 0.22 190;
+
+    --chart-1: 0.7 0.22 190;
+    --chart-2: 0.75 0.2 95;
+    --chart-3: 0.65 0.24 305;
+    --chart-4: 0.68 0.2 165;
+    --chart-5: 0.72 0.19 225;
+
+    --sidebar: 0.16 0.012 245;
+    --sidebar-foreground: 0.95 0.01 245;
+    --sidebar-primary: 0.7 0.22 190;
+    --sidebar-primary-foreground: 0.12 0.01 190;
+    --sidebar-accent: 0.75 0.2 95;
+    --sidebar-accent-foreground: 0.12 0.01 95;
+    --sidebar-border: 0.25 0.012 245;
+    --sidebar-ring: 0.7 0.22 190;
+  }
+
+  .dark {
+    --background: 0.12 0.01 245;
+    --foreground: 0.95 0.01 245;
+    --card: 0.16 0.012 245;
+    --card-foreground: 0.95 0.01 245;
+    --popover: 0.16 0.012 245;
+    --popover-foreground: 0.95 0.01 245;
+
+    --primary: 0.7 0.22 190;
+    --primary-foreground: 0.12 0.01 190;
+
+    --secondary: 0.75 0.2 95;
+    --secondary-foreground: 0.12 0.01 95;
+    --muted: 0.22 0.008 245;
+    --muted-foreground: 0.6 0.008 245;
+
+    --accent: 0.65 0.24 305;
+    --accent-foreground: 0.95 0.01 305;
+
+    --destructive: 0.65 0.24 305;
+    --destructive-foreground: 0.95 0.01 305;
+
+    --border: 0.25 0.012 245;
+    --input: 0.25 0.012 245;
+    --ring: 0.7 0.22 190;
+
+    --chart-1: 0.7 0.22 190;
+    --chart-2: 0.75 0.2 95;
+    --chart-3: 0.65 0.24 305;
+    --chart-4: 0.68 0.2 165;
+    --chart-5: 0.72 0.19 225;
+
+    --sidebar: 0.16 0.012 245;
+    --sidebar-foreground: 0.95 0.01 245;
+    --sidebar-primary: 0.7 0.22 190;
+    --sidebar-primary-foreground: 0.12 0.01 190;
+    --sidebar-accent: 0.75 0.2 95;
+    --sidebar-accent-foreground: 0.12 0.01 95;
+    --sidebar-border: 0.25 0.012 245;
+    --sidebar-ring: 0.7 0.22 190;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/assets/fonts/DMSans.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/assets/fonts/JetBrainsMono.woff2") format("woff2");
+  font-display: swap;
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Glowing neon shadows */
+  .shadow-glow-cyan {
+    box-shadow: 0 0 12px 2px oklch(var(--primary) / 0.4), 0 0 24px 4px
+      oklch(var(--primary) / 0.15);
+  }
+
+  .shadow-glow-cyan-lg {
+    box-shadow: 0 0 20px 4px oklch(var(--primary) / 0.5), 0 0 40px 8px
+      oklch(var(--primary) / 0.2);
+  }
+
+  .shadow-glow-yellow {
+    box-shadow: 0 0 12px 2px oklch(var(--secondary) / 0.35), 0 0 24px 4px
+      oklch(var(--secondary) / 0.12);
+  }
+
+  .shadow-glow-accent {
+    box-shadow: 0 0 10px 2px oklch(var(--accent) / 0.3), 0 0 20px 4px
+      oklch(var(--accent) / 0.1);
+  }
+
+  /* Glassmorphism base */
+  .glass-effect {
+    background: oklch(var(--card) / 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid oklch(var(--border) / 0.3);
+  }
+
+  .glass-effect-darker {
+    background: oklch(var(--card) / 0.5);
+    backdrop-filter: blur(12px);
+    border: 1px solid oklch(var(--border) / 0.25);
+  }
+}
